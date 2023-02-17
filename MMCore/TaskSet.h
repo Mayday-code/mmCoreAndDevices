@@ -56,6 +56,7 @@ protected:
         for (size_t n = 0; n < taskCount; ++n)
         {
             Task* task = new(std::nothrow) T(semaphore_, n, taskCount);
+            // when not using std::nothrow, it will thorw an exception when "new" fails. Instead, it will make "task" a nullptr using std::nothrow
             if (!task)
                 continue;
             tasks_.push_back(task);
