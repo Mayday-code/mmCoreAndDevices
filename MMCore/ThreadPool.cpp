@@ -35,7 +35,8 @@
 ThreadPool::ThreadPool()
     : abortFlag_(false)
 {
-    const size_t hwThreadCount = std::max<size_t>(1, std::thread::hardware_concurrency());
+    const size_t hwThreadCount = std::max<size_t>(1, std::thread::hardware_concurrency());// 1. hardware_concurrency() will return 0 when it is unavailable
+        // 2. explicity designate the template parameter
     for (size_t n = 0; n < hwThreadCount; ++n)
         threads_.push_back(std::make_shared<std::thread>(&ThreadPool::ThreadFunc, this));
 }
@@ -46,7 +47,7 @@ ThreadPool::~ThreadPool()
         std::lock_guard<std::mutex> lock(mx_);
         abortFlag_ = true;
     }
-    cv_.notify_all();
+    cv_.notify_all();// awaken threads blocked by this condition variable
 
     for (const std::shared_ptr<std::thread>& thread : threads_)
         thread->join();
@@ -93,7 +94,9 @@ void ThreadPool::ThreadFunc()
         Task* task = NULL;
         {
             std::unique_lock<std::mutex> lock(mx_);
-            cv_.wait(lock, [&]() { return abortFlag_ || !queue_.empty(); });
+            cv_.wait(lock, [&]() { return abortFlag_ || !queue_.empty(); });// false -> blocked, true -> go on
+            // blocked only if abortFalg is false (namely, the program is running) and queue is empty
+            // because when abortFlag is true we should let the code run to end this thread
             if (abortFlag_)
                 break;
             task = queue_.front();
