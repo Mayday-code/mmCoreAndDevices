@@ -51,9 +51,9 @@ void TaskSet_CopyMemory::ATask::Execute()
     size_t chunkBytes = bytes_ / usedTaskCount_;
     const size_t chunkOffset = taskIndex_ * chunkBytes;
     if (taskIndex_ == usedTaskCount_ - 1)
-        chunkBytes += bytes_ % usedTaskCount_;
+        chunkBytes += bytes_ % usedTaskCount_;// the last task is responsible for the all last Bytes
 
-    void* dst = static_cast<char*>(dst_) + chunkOffset;
+    void* dst = static_cast<char*>(dst_) + chunkOffset;// do not plus or minus on void pointer
     const void* src = static_cast<const char*>(src_) + chunkOffset;
 
     std::memcpy(dst, src, chunkBytes);
@@ -74,7 +74,8 @@ void TaskSet_CopyMemory::SetUp(void* dst, const void* src, size_t bytes)
     // Call memcpy directly without threading for small frames up to 1MB
     // Otherwise do parallel copy and add one thread for each 1MB
     // The limits were found experimentally
-    usedTaskCount_ = std::min<size_t>(1 + bytes / 1000000, tasks_.size());
+    usedTaskCount_ = std::min<size_t>(1 + bytes / 1000000, tasks_.size());// (1 + bytes / 1000000) seems to be wrong
+    // formula : size = (number + unit - 1) / unit. If the last task is responsible for the all last Bytes, the number of tasks should be size - 1.
     if (usedTaskCount_ == 1)
     {
         std::memcpy(dst, src, bytes);
