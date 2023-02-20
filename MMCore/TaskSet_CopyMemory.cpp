@@ -28,7 +28,7 @@
 #include <cstring>
 
 TaskSet_CopyMemory::ATask::ATask(std::shared_ptr<Semaphore> semDone, size_t taskIndex, size_t totalTaskCount)
-    : Task(semDone, taskIndex, totalTaskCount),
+    : Task(semDone, taskIndex, totalTaskCount),// the usedTaskCount_ of task first is set to the same as totalTaskCount
     dst_(NULL),
     src_(NULL),
     bytes_(0)
@@ -40,6 +40,7 @@ void TaskSet_CopyMemory::ATask::SetUp(void* dst, const void* src, size_t bytes, 
     dst_ = dst;
     src_ = src;
     bytes_ = bytes;
+    // Then the usedTaskCount_ of task is set to the size of task really need to use
     usedTaskCount_ = usedTaskCount;
 }
 
@@ -62,7 +63,7 @@ void TaskSet_CopyMemory::ATask::Execute()
 TaskSet_CopyMemory::TaskSet_CopyMemory(std::shared_ptr<ThreadPool> pool)
     : TaskSet(pool)
 {
-    CreateTasks<ATask>();
+    CreateTasks<ATask>();// usedTaskCount_ first is set to the size of pool
 }
 
 void TaskSet_CopyMemory::SetUp(void* dst, const void* src, size_t bytes)
@@ -74,6 +75,7 @@ void TaskSet_CopyMemory::SetUp(void* dst, const void* src, size_t bytes)
     // Call memcpy directly without threading for small frames up to 1MB
     // Otherwise do parallel copy and add one thread for each 1MB
     // The limits were found experimentally
+    // Then usedTaskCount_ is set to the count of tasks
     usedTaskCount_ = std::min<size_t>(1 + bytes / 1000000, tasks_.size());// (1 + bytes / 1000000) seems to be wrong
     // formula : size = (number + unit - 1) / unit. If the last task is responsible for the all last Bytes, the number of tasks should be size - 1.
     if (usedTaskCount_ == 1)
