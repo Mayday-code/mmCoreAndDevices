@@ -101,7 +101,7 @@ void TaskSet_CopyMemory::Wait()
     if (usedTaskCount_ == 1)
         return; // Already done in SetUp, nothing to wait for
 
-    semaphore_->Wait(usedTaskCount_);
+    semaphore_->Wait(usedTaskCount_);// Block this thread till all tasks have been done
 }
 
 void TaskSet_CopyMemory::MemCopy(void* dst, const void* src, size_t bytes)
