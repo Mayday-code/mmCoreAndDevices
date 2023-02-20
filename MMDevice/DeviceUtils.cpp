@@ -178,7 +178,7 @@ bool CDeviceUtils::CheckEnvironment(std::string env)
    bool bvalue = false;
    if( 0 < env.length())
    {
-      char *pvalue = ::getenv(env.c_str());
+      char *pvalue = ::getenv(env.c_str());// get the value of certain environment variable
       if( 0 != pvalue)
       {
          if( 0 != *pvalue)
