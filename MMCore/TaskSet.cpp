@@ -53,5 +53,6 @@ void TaskSet::Execute()
 
 void TaskSet::Wait()
 {
-    semaphore_->Wait(usedTaskCount_);// consume usedTaskCount_ semaphores; usedTaskCount_ is set to the size of std::vector<Task*>
+    semaphore_->Wait(usedTaskCount_);// consume usedTaskCount_ semaphores; usedTaskCount_ is first set to the size of std::vector<Task*>, then to the size of tasks 
+    // really need
 }
