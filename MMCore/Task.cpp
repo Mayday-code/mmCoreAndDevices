@@ -44,5 +44,5 @@ Task::~Task()
 
 void Task::Done()
 {
-    semaphore_->Release();
+    semaphore_->Release();// default value 1;
 }
