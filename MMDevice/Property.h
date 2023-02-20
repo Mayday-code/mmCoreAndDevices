@@ -88,7 +88,7 @@ class Action : public ActionFunctor
 {
 private:
    T* pObj_;
-   int (T::*fpt_)(PropertyBase* pProp, ActionType eAct);
+   int (T::*fpt_)(PropertyBase* pProp, ActionType eAct);// Point to a function in class T
 
 public:
    Action(T* pObj, int(T::*fpt)(PropertyBase* pProp, ActionType eAct) ) :
@@ -133,7 +133,7 @@ public:
       hasData_(false),
       initStatus_(true),
       limits_(false),
-      sequenceable_(false),
+      sequenceable_(false),// sortable?
       sequenceMaxSize_(0),
       sequenceEvents_(),
       lowerLimit_(0.0),
