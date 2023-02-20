@@ -265,7 +265,7 @@ MM::PropertyCollection::~PropertyCollection()
       delete it->second;
 }
 
-int MM::PropertyCollection::Set(const char* pszPropName, const char* pszValue)
+int MM::PropertyCollection::Set(const char* pszPropName, const char* pszValue)// psz - pointer to a String with Zero End
 {
    MM::Property* pProp = Find(pszPropName);
    if (!pProp)
